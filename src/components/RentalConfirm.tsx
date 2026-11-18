@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import { AppDispatch, useAppSelector } from "@/redux/store";
 import { setCart } from "@/redux/features/cartSlice";
 import createRental from "@/libs/createRental";
-import { formatBaht, rentalCost, rentalDays, rentalErrorMessage, validateRental } from "@/libs/rentalValidation";
+import { MAX_RENTAL_QUANTITY, formatBaht, rentalCost, rentalDays, rentalErrorMessage, validateRental } from "@/libs/rentalValidation";
 import { CartItem } from "../../interfaces";
 import Button from "./Button";
 import ImagePlaceholder from "./ImagePlaceholder";
@@ -22,12 +22,19 @@ export default function RentalConfirm({ itemFromDetailPage }: { itemFromDetailPa
 
   const items = directItem ? [directItem] : cartItems;
   const total = items.reduce((sum, item) => sum + rentalCost(item.rentalRate, item), 0);
+  const quantityByEquipment = items.reduce<Record<string, number>>((totals, item) => {
+    totals[item.equipmentId] = (totals[item.equipmentId] ?? 0) + item.quantity;
+    return totals;
+  }, {});
+  const isOverLimit = (item: CartItem) => quantityByEquipment[item.equipmentId] > MAX_RENTAL_QUANTITY;
+  const hasOverLimit = items.some(isOverLimit);
 
   useEffect(() => {
     if (!itemFromDetailPage && cartItems.length === 0 && !loading) router.replace("/cart");
   }, [itemFromDetailPage, cartItems.length, loading, router]);
 
   const submitEachItem = async () => {
+    if (hasOverLimit) return;
     setLoading(true);
     const failed: CartItem[] = [];
     for (const item of items) {
@@ -77,6 +84,11 @@ export default function RentalConfirm({ itemFromDetailPage }: { itemFromDetailPa
                 <span className="text-sm text-muted">
                   {formatBaht(item.rentalRate)} × {item.quantity} เครื่อง × {days} วัน
                 </span>
+                {isOverLimit(item) && (
+                  <span className="text-[13px] font-medium text-danger-text">
+                    เช่าได้สูงสุด {MAX_RENTAL_QUANTITY} เครื่องต่อคำขอ (อุปกรณ์นี้รวม {quantityByEquipment[item.equipmentId]} เครื่อง)
+                  </span>
+                )}
                 {item.error && <span className="text-[13px] font-medium text-danger-text">{item.error}</span>}
               </div>
               <strong className="text-lg text-primary">{formatBaht(rentalCost(item.rentalRate, item))}</strong>
@@ -98,7 +110,7 @@ export default function RentalConfirm({ itemFromDetailPage }: { itemFromDetailPa
         <LinkButton href={itemFromDetailPage ? `/equipment/${itemFromDetailPage.equipmentId}` : "/cart"} variant="secondary">
           กลับไปแก้ไข
         </LinkButton>
-        <Button onClick={submitEachItem} disabled={loading || items.length === 0}>
+        <Button onClick={submitEachItem} disabled={loading || items.length === 0 || hasOverLimit}>
           ยืนยันส่งคำขอเช่า
         </Button>
       </div>

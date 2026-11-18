@@ -8,7 +8,7 @@ export default function CartLink() {
   return (
     <Link
       href="/cart"
-      aria-label={`ตะกร้า ${count} รายการ`}
+      aria-label="ตะกร้า"
       className="relative flex h-10 w-10 items-center justify-center rounded-lg border border-line text-ink"
     >
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true">

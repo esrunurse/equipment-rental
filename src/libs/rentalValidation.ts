@@ -11,6 +11,8 @@ export interface RentalErrors {
   form?: string;
 }
 
+export const MAX_RENTAL_QUANTITY = 3;
+
 const DAY = 24 * 60 * 60 * 1000;
 
 const toUtc = (date: string) => new Date(`${date}T00:00:00.000Z`).getTime();
@@ -41,7 +43,7 @@ export function canShowCost(input: RentalInput) {
 
 export function validateRental(input: RentalInput, available: number): RentalErrors {
   const errors: RentalErrors = {};
-  if (!Number.isInteger(input.quantity) || input.quantity < 1 || input.quantity > 3) {
+  if (!Number.isInteger(input.quantity) || input.quantity < 1 || input.quantity > MAX_RENTAL_QUANTITY) {
     errors.quantity = "เช่าได้สูงสุด 3 เครื่องต่อคำขอ";
   } else if (input.quantity > available) {
     errors.form = "จำนวนที่ขอเกินจำนวนที่มี";
