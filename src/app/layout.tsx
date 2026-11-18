@@ -6,6 +6,7 @@ import { authOptions } from "./api/auth/[...nextauth]/authOptions";
 import NextAuthProvider from "@/providers/NextAuthProvider";
 import ReduxProvider from "@/redux/ReduxProvider";
 import TopMenu from "@/components/TopMenu";
+import ToastProvider from "@/providers/ToastProvider";
 
 const plexThai = IBM_Plex_Sans_Thai({
   variable: "--font-plex-thai",
@@ -25,8 +26,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
       <body className="min-h-screen bg-page font-sans text-ink">
         <ReduxProvider>
           <NextAuthProvider session={session}>
-            <TopMenu />
-            {children}
+            <ToastProvider>
+              <TopMenu />
+              {children}
+            </ToastProvider>
           </NextAuthProvider>
         </ReduxProvider>
       </body>

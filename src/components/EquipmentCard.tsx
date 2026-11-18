@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { EquipmentItem } from "../../interfaces";
 import imageUrl from "@/libs/imageUrl";
 import { formatBaht } from "@/libs/rentalValidation";
@@ -26,12 +27,12 @@ export default function EquipmentCard({ item }: { item: EquipmentItem }) {
           <span className="text-sm text-muted">
             <strong className="text-xl text-primary">{formatBaht(item.rentalRate)}</strong> / วัน
           </span>
-          <span
-            aria-disabled="true"
-            className="flex h-[38px] cursor-not-allowed items-center rounded-lg bg-primary px-3.5 text-sm font-semibold text-white"
+          <Link
+            href={`/equipment/${item._id}`}
+            className="flex h-[38px] items-center rounded-lg bg-primary px-3.5 text-sm font-semibold text-white no-underline"
           >
             ดูรายละเอียด
-          </span>
+          </Link>
         </div>
       </div>
     </article>
