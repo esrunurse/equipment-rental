@@ -9,6 +9,7 @@ import { clearCart } from "@/redux/features/cartSlice";
 import TextField from "./TextField";
 import Button from "./Button";
 import FormAlert from "./FormAlert";
+import isValidEmail from "@/libs/isValidEmail";
 
 export default function SignInForm() {
   const router = useRouter();
@@ -23,6 +24,7 @@ export default function SignInForm() {
     e.preventDefault();
     const next: typeof errors = {};
     if (!email) next.email = "กรุณากรอกอีเมล";
+    else if (!isValidEmail(email)) next.email = "อีเมลไม่ถูกต้อง";
     if (!password) next.password = "กรุณากรอกรหัสผ่าน";
     setErrors(next);
     if (next.email || next.password) return;

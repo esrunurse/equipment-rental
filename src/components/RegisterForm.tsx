@@ -3,6 +3,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import userRegister from "@/libs/userRegister";
+import isValidEmail from "@/libs/isValidEmail";
 import TextField from "./TextField";
 import Button from "./Button";
 import FormAlert from "./FormAlert";
@@ -22,7 +23,7 @@ export default function RegisterForm() {
     e.preventDefault();
     const next: Errors = {};
     if (!name.trim()) next.name = "กรุณากรอกชื่อ";
-    if (!/^\S+@\S+\.\S+$/.test(email)) next.email = "อีเมลไม่ถูกต้อง";
+    if (!isValidEmail(email)) next.email = "อีเมลไม่ถูกต้อง";
     if (!tel) next.tel = "กรุณากรอกเบอร์โทร";
     else if (!/^\d{10}$/.test(tel)) next.tel = "เบอร์โทรต้องเป็นตัวเลข 10 หลัก";
     if (password.length < 6) next.password = "รหัสผ่านอย่างน้อย 6 ตัว";
